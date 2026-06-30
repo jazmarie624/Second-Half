@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Second Half 2026 — Jasz</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1B2A4A;
+    --cream: #F8F4ED;
+    --gold: #C9A84C;
+    --gold-light: #E8D5A3;
+    --white: #FFFFFF;
+    --navy-light: #2C3E6B;
+    --text-dark: #1B2A4A;
+    --text-mid: #4A5568;
+  }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background: var(--navy);
+    font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .book {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* SLIDES */
+  .slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 32px;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .slide.prev {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  /* BACKGROUNDS */
+  .slide-navy { background: var(--navy); color: var(--cream); }
+  .slide-cream { background: var(--cream); color: var(--navy); }
+  .slide-gold { background: var(--gold); color: var(--navy); }
+  .slide-navy-pattern {
+    background: var(--navy);
+    color: var(--cream);
+    background-image: radial-gradient(circle at 20% 80%, rgba(201,168,76,0.08) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 20%, rgba(201,168,76,0.06) 0%, transparent 50%);
+  }
+
+  /* TYPOGRAPHY */
+  .eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 16px;
+  }
+
+  .display {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(38px, 9vw, 62px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.5px;
+  }
+
+  .display-italic {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 8vw, 52px);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.1;
+  }
+
+  .heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(24px, 5.5vw, 36px);
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .subheading {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.7;
+    opacity: 0.8;
+    margin-bottom: 24px;
+  }
+
+  .body-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.75;
+  }
+
+  .gold-text { color: var(--gold); }
+  .gold-text-dark { color: var(--gold); }
+  .cream-text { color: var(--cream); }
+
+  /* DIVIDER */
+  .divider {
+    width: 48px;
+    height: 1.5px;
+    background: var(--gold);
+    margin: 20px auto;
+  }
+  .divider-left {
+    width: 48px;
+    height: 1.5px;
+    background: var(--gold);
+    margin: 20px 0;
+  }
+
+  /* ARROWS */
+  .arrow-list {
+    list-style: none;
+    text-align: left;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .arrow-list li {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .arrow-list li::before {
+    content: '→';
+    color: var(--gold);
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* FILL FIELDS */
+  .fill-field {
+    width: 100%;
+    max-width: 420px;
+    margin: 10px 0;
+  }
+
+  .fill-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .fill-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid rgba(201,168,76,0.5);
+    padding: 8px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-style: italic;
+    color: inherit;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .fill-input:focus {
+    border-bottom-color: var(--gold);
+  }
+
+  .fill-input::placeholder {
+    opacity: 0.3;
+    font-style: italic;
+  }
+
+  /* MONTH CARD */
+  .month-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 2px;
+    padding: 20px 24px;
+    width: 100%;
+    max-width: 420px;
+    margin: 8px 0;
+  }
+
+  .month-card.cream-bg {
+    background: rgba(27,42,74,0.06);
+    border-color: rgba(201,168,76,0.3);
+  }
+
+  .month-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .month-theme {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+
+  .mini-list {
+    list-style: none;
+  }
+
+  .mini-list li {
+    font-size: 13px;
+    line-height: 1.7;
+    opacity: 0.85;
+    padding: 3px 0;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .mini-list li::before {
+    content: '·';
+    color: var(--gold);
+    position: absolute;
+    left: 4px;
+    font-size: 18px;
+    line-height: 1.3;
+  }
+
+  /* NAVIGATION */
+  .nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 28px 28px;
+    background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 100%);
+    z-index: 100;
+  }
+
+  .nav-btn {
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.4);
+    color: var(--gold);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .nav-btn:active { transform: scale(0.93); background: rgba(201,168,76,0.3); }
+  .nav-btn:disabled { opacity: 0.2; pointer-events: none; }
+
+  .progress-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.3);
+    transition: all 0.3s;
+  }
+
+  .dot.active {
+    background: var(--gold);
+    width: 18px;
+    border-radius: 3px;
+  }
+
+  /* COVER ELEMENTS */
+  .cover-badge {
+    display: inline-block;
+    border: 1px solid var(--gold);
+    padding: 6px 18px;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .cover-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-style: italic;
+    opacity: 0.5;
+    margin-top: 24px;
+    letter-spacing: 1px;
+  }
+
+  .quote-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 80px;
+    color: var(--gold);
+    opacity: 0.3;
+    line-height: 0.8;
+    margin-bottom: 8px;
+  }
+
+  .section-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 80px;
+    font-weight: 700;
+    color: var(--gold);
+    opacity: 0.12;
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    line-height: 1;
+  }
+
+  .tag {
+    display: inline-block;
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin: 3px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .tag.navy {
+    background: rgba(27,42,74,0.1);
+    border-color: rgba(27,42,74,0.25);
+    color: var(--navy);
+  }
+
+  .content-block {
+    width: 100%;
+    max-width: 420px;
+    text-align: left;
+  }
+
+  .center { text-align: center; }
+
+  /* Scrollable slide content */
+  .slide-inner {
+    width: 100%;
+    max-width: 460px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 80px;
+  }
+
+  .journal-box {
+    width: 100%;
+    max-width: 420px;
+    background: rgba(201,168,76,0.08);
+    border-left: 3px solid var(--gold);
+    padding: 16px 20px;
+    margin-top: 20px;
+  }
+
+  .journal-label {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+
+  .journal-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+    padding: 8px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-style: italic;
+    color: inherit;
+    outline: none;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .journal-input::placeholder { opacity: 0.3; }
+</style>
+</head>
+<body>
+<div class="book" id="book">
+
+  <!-- SLIDE 1: COVER -->
+  <div class="slide slide-navy active" id="slide-0">
+    <div class="slide-inner center">
+      <div class="cover-badge">Jasz · 2026</div>
+      <div class="display cream-text" style="margin-bottom:6px">The</div>
+      <div class="display gold-text" style="font-size: clamp(44px,11vw,72px); margin-bottom:6px">Second Half</div>
+      <div class="display-italic cream-text">of everything.</div>
+      <div class="divider"></div>
+      <p class="subheading center" style="max-width:280px; margin-top:8px">July — December 2026<br>Your six-month glow up guide</p>
+      <div class="cover-name">by Jasz · #rubiaxolinda · J Empire</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: THE DECLARATION -->
+  <div class="slide slide-cream" id="slide-1">
+    <div class="slide-inner">
+      <div class="section-number" style="color:var(--navy)">★</div>
+      <div class="eyebrow" style="color:var(--navy)">Before We Begin</div>
+      <div class="quote-mark" style="color:var(--navy);">"</div>
+      <div class="display-italic" style="font-size:clamp(26px,6vw,38px); color:var(--navy); margin-bottom:20px">
+        June is almost gone.<br>But July to December<br>is still completely yours.
+      </div>
+      <div class="divider-left"></div>
+      <p class="body-text" style="max-width:380px; margin-bottom:24px">
+        You are a single mother of six. You are in school. You are building multiple income streams. You are healing. You are still showing up every single day.<br><br>
+        That is not failure. That is foundation.<br><br>
+        The second half of 2026 is not a restart — it is a <em>reveal.</em>
+      </p>
+      <div class="fill-field">
+        <span class="fill-label" style="color:var(--navy)">I am ready to become</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="write it here..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: SECTION 1 HEADER - HEALTH & BODY -->
+  <div class="slide slide-navy-pattern" id="slide-2">
+    <div class="slide-inner center">
+      <div class="eyebrow gold-text">Section One</div>
+      <div class="display cream-text">Health</div>
+      <div class="display gold-text">&amp; Body</div>
+      <div class="divider"></div>
+      <p class="subheading center" style="max-width:300px">
+        Not a punishment. Not a phase.<br>A lifestyle you actually keep.
+      </p>
+      <p class="body-text center" style="opacity:0.5; font-size:13px">Write what you actually want by December. Keep it real.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: HEALTH FILL-IN -->
+  <div class="slide slide-cream" id="slide-3">
+    <div class="slide-inner">
+      <div class="eyebrow" style="color:var(--navy)">Health &amp; Body · Your Goals</div>
+      <div class="heading" style="margin-bottom:4px">For Jasz, this means...</div>
+      <div class="divider-left"></div>
+      <ul class="arrow-list" style="margin-bottom:20px">
+        <li>Gym Mon &amp; Fri — heavy glutes, no excuses</li>
+        <li>Home workout Wednesdays — isolation &amp; core</li>
+        <li>Cardio Tue &amp; Sat — walk, bike, or dance with the kids</li>
+        <li>Creatine 5g every single day, non-negotiable</li>
+        <li>Protein at every meal — 130g daily target</li>
+        <li>Sleep before midnight at least 5 nights a week</li>
+        <li>Drink water before coffee every morning</li>
+        <li>One Pilates or stretch session per week for your mind</li>
+      </ul>
+      <div class="fill-field">
+        <span class="fill-label" style="color:var(--navy)">One thing I'm adding this half</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="e.g. morning walks before drop-off..." />
+      </div>
+      <div class="fill-field" style="margin-top:8px">
+        <span class="fill-label" style="color:var(--navy)">By December my body will feel</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="strong, light, confident..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: SECTION 2 HEADER - MONEY -->
+  <div class="slide slide-navy-pattern" id="slide-4">
+    <div class="slide-inner center">
+      <div class="eyebrow gold-text">Section Two</div>
+      <div class="display cream-text">Money</div>
+      <div class="display-italic gold-text">Not goals. Reality.</div>
+      <div class="divider"></div>
+      <p class="subheading center" style="max-width:300px">
+        What do you want your money situation<br>to actually look like by December?
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: MONEY FILL-IN -->
+  <div class="slide slide-cream" id="slide-5">
+    <div class="slide-inner">
+      <div class="eyebrow" style="color:var(--navy)">Money · Your Reality</div>
+      <div class="heading" style="margin-bottom:4px">For Jasz, this means...</div>
+      <div class="divider-left"></div>
+      <ul class="arrow-list" style="margin-bottom:20px">
+        <li>Bills Tracker open every payday — no surprises</li>
+        <li>Savings bucket funded before any spending</li>
+        <li>Turo CR-V earning passive income monthly</li>
+        <li>DoorDash &amp; Uber as tools, not survival</li>
+        <li>One expense cut per month — something quiet draining you</li>
+        <li>Emergency fund started — even $20 a week counts</li>
+        <li>Process server certification completed — new income stream</li>
+        <li>Debt reduced, not ignored</li>
+      </ul>
+      <div class="fill-field">
+        <span class="fill-label" style="color:var(--navy)">My money goal by December</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="e.g. $1,000 saved, no credit card debt..." />
+      </div>
+      <div class="fill-field" style="margin-top:8px">
+        <span class="fill-label" style="color:var(--navy)">One expense I'm cutting right now</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="subscriptions, impulse food, etc..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: SECTION 3 HEADER - LEARNING -->
+  <div class="slide slide-navy-pattern" id="slide-6">
+    <div class="slide-inner center">
+      <div class="eyebrow gold-text">Section Three</div>
+      <div class="display cream-text">Something You</div>
+      <div class="display gold-text">Want to Learn</div>
+      <div class="divider"></div>
+      <p class="subheading center" style="max-width:300px">
+        One skill. Seriously just one.<br>The one that changes your trajectory.
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: LEARNING FILL-IN -->
+  <div class="slide slide-cream" id="slide-7">
+    <div class="slide-inner">
+      <div class="eyebrow" style="color:var(--navy)">Learning · Your Skill</div>
+      <div class="heading" style="margin-bottom:4px">For Jasz, this means...</div>
+      <div class="divider-left"></div>
+      <ul class="arrow-list" style="margin-bottom:20px">
+        <li>BCBA path — stay consistent at Valencia, keep the end goal in view</li>
+        <li>RBT certification — earn while you learn, enter the field early</li>
+        <li>Process server certification — FAPPS course, 9th Circuit application</li>
+        <li>Notary public — first step, low cost, opens doors immediately</li>
+        <li>Financial literacy — know your numbers, change your life</li>
+        <li>Content creation — document J Empire, your story sells itself</li>
+      </ul>
+      <div class="fill-field">
+        <span class="fill-label" style="color:var(--navy)">The ONE skill I'm mastering this half</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="write it here..." />
+      </div>
+      <div class="fill-field" style="margin-top:8px">
+        <span class="fill-label" style="color:var(--navy)">How I'll learn it</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="course, YouTube, certification..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: SECTION 4 HEADER - RELATIONSHIPS -->
+  <div class="slide slide-navy-pattern" id="slide-8">
+    <div class="slide-inner center">
+      <div class="eyebrow gold-text">Section Four</div>
+      <div class="display cream-text">Relationships</div>
+      <div class="divider"></div>
+      <p class="subheading center" style="max-width:300px">
+        Who deserves more from you<br>before December ends?<br><br>
+        <em style="opacity:0.7; font-style:italic">Hint: all six of your kids always top this list — even the one who's grown and gone.</em>
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: RELATIONSHIPS FILL-IN -->
+  <div class="slide slide-cream" id="slide-9">
+    <div class="slide-inner">
+      <div class="eyebrow" style="color:var(--navy)">Relationships · Your People</div>
+      <div class="heading" style="margin-bottom:4px">For Jasz, this means...</div>
+      <div class="divider-left"></div>
+      <ul class="arrow-list" style="margin-bottom:20px">
+        <li>Jaylani — she's in high school. She's watching you build. Tell her what you're building.</li>
+        <li>Juliusz, Jaliyah, Jazelli, Jeovane — one intentional moment per week with each</li>
+        <li>Yourself — protect your peace like it's a bill due on the 1st</li>
+        <li>Cut the relationships that cost you sleep, money, or self-worth</li>
+        <li>Find one person in behavioral health to learn from or network with</li>
+      </ul>
+      <div class="fill-field">
+        <span class="fill-label" style="color:var(--navy)">Person 1 &amp; what changes</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="name · what you'll do differently..." />
+      </div>
+      <div class="fill-field" style="margin-top:8px">
+        <span class="fill-label" style="color:var(--navy)">Person 2 &amp; what changes</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="name · what you'll do differently..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: SECTION 5 HEADER - STOP -->
+  <div class="slide slide-navy-pattern" id="slide-10">
+    <div class="slide-inner center">
+      <div class="eyebrow gold-text">Section Five</div>
+      <div class="display cream-text">Something You</div>
+      <div class="display gold-text">Want to Stop</div>
+      <div class="divider"></div>
+      <p class="subheading center" style="max-width:300px">
+        One thing quietly draining you.<br>Name it. Own it. Drop it.
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: STOP FILL-IN -->
+  <div class="slide slide-cream" id="slide-11">
+    <div class="slide-inner">
+      <div class="eyebrow" style="color:var(--navy)">Things to Stop · Your Detox</div>
+      <div class="heading" style="margin-bottom:4px">For Jasz, this means...</div>
+      <div class="divider-left"></div>
+      <ul class="arrow-list" style="margin-bottom:20px">
+        <li>Late-night scrolling — your body needs that sleep more than TikTok needs your views</li>
+        <li>Saying yes when you mean no — your time is income</li>
+        <li>Overthinking decisions you've already made — trust yourself</li>
+        <li>Comparing your chapter 7 to someone else's chapter 20</li>
+        <li>Letting guilt about the past take up space the future needs</li>
+        <li>Spending before the budget says yes</li>
+        <li>Shrinking yourself in rooms where you belong</li>
+      </ul>
+      <div class="fill-field">
+        <span class="fill-label" style="color:var(--navy)">The one thing I'm dropping this half</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="be honest with yourself..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: MINDSET DETOX -->
+  <div class="slide slide-navy" id="slide-12">
+    <div class="slide-inner center">
+      <div class="eyebrow gold-text">Bonus Section</div>
+      <div class="heading cream-text" style="text-align:center; margin-bottom:16px">Mental Mindset<br><span class="gold-text">Detox List</span></div>
+      <div class="divider"></div>
+      <ul class="arrow-list" style="margin-bottom:8px">
+        <li style="color:var(--cream)">Stop apologizing for resting — recovery is productive</li>
+        <li style="color:var(--cream)">Unfollow accounts that make you feel behind</li>
+        <li style="color:var(--cream)">Stop explaining yourself to people who aren't invested in you</li>
+        <li style="color:var(--cream)">Replace "I can't afford it" with "It's not a priority right now"</li>
+        <li style="color:var(--cream)">Stop waiting until you feel ready — readiness is built in motion</li>
+        <li style="color:var(--cream)">Let your kids see you try hard things and succeed</li>
+        <li style="color:var(--cream)">Gratitude is not toxic positivity — find one thing every morning</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: MONTHLY TIMELINE HEADER -->
+  <div class="slide slide-cream" id="slide-13">
+    <div class="slide-inner center">
+      <div class="eyebrow" style="color:var(--navy)">The Plan</div>
+      <div class="display" style="color:var(--navy)">Six Months.</div>
+      <div class="display-italic gold-text">Six Focuses.</div>
+      <div class="divider"></div>
+      <p class="body-text center" style="max-width:300px; opacity:0.7">
+        Pick one non-negotiable per month.<br>
+        The thing that happens no matter how busy life gets.<br><br>
+        Everything else can flex. These cannot.
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: JULY -->
+  <div class="slide slide-navy" id="slide-14">
+    <div class="slide-inner">
+      <div class="eyebrow gold-text">Month One</div>
+      <div class="display cream-text">July</div>
+      <div class="month-theme">Reset Your Routine</div>
+      <div class="divider-left"></div>
+      <ul class="mini-list" style="margin-bottom:20px; width:100%; max-width:420px">
+        <li style="color:var(--cream)">Wake up before the chaos — even 20 minutes earlier</li>
+        <li style="color:var(--cream)">No phone for the first 30 minutes of your morning</li>
+        <li style="color:var(--cream)">Drink water before coffee — every single day</li>
+        <li style="color:var(--cream)">10-minute tidy before bed so tomorrow starts clean</li>
+        <li style="color:var(--cream)">Open your Bills Tracker every payday — no avoidance</li>
+      </ul>
+      <div class="journal-box">
+        <div class="journal-label">July Journal Prompt</div>
+        <p style="font-size:13px; color:var(--cream); opacity:0.8; margin-bottom:12px; font-style:italic">What habits are helping me grow? What habits are holding me back?</p>
+        <input class="journal-input" style="color:var(--cream)" placeholder="your answer..." />
+      </div>
+      <div class="fill-field" style="margin-top:16px">
+        <span class="fill-label">My July non-negotiable</span>
+        <input class="fill-input" style="color:var(--cream)" placeholder="the one thing no matter what..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: AUGUST -->
+  <div class="slide slide-cream" id="slide-15">
+    <div class="slide-inner">
+      <div class="eyebrow" style="color:var(--navy)">Month Two</div>
+      <div class="display" style="color:var(--navy)">August</div>
+      <div class="month-theme">Upgrade Your Health</div>
+      <div class="divider-left"></div>
+      <ul class="mini-list" style="margin-bottom:20px; width:100%; max-width:420px">
+        <li>Back to school = back to structure for YOU too</li>
+        <li>Gym Mon &amp; Fri locked in — schedule it like pick-up</li>
+        <li>Meal prep Sundays — even just proteins for the week</li>
+        <li>Hit 8,000 steps on non-gym days</li>
+        <li>Tax-free weekend — back to school done &amp; budget protected</li>
+        <li>Creatine + protein — no skipping</li>
+      </ul>
+      <div class="journal-box" style="background:rgba(27,42,74,0.06); border-left-color:var(--gold)">
+        <div class="journal-label">August Journal Prompt</div>
+        <p style="font-size:13px; opacity:0.7; margin-bottom:12px; font-style:italic">How does movement make me feel? What does "healthy" actually mean to me?</p>
+        <input class="journal-input" style="color:var(--navy)" placeholder="your answer..." />
+      </div>
+      <div class="fill-field" style="margin-top:16px">
+        <span class="fill-label" style="color:var(--navy)">My August non-negotiable</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="the one thing no matter what..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 17: SEPTEMBER -->
+  <div class="slide slide-navy" id="slide-16">
+    <div class="slide-inner">
+      <div class="eyebrow gold-text">Month Three</div>
+      <div class="display cream-text">September</div>
+      <div class="month-theme">Heal Your Mindset</div>
+      <div class="divider-left"></div>
+      <ul class="mini-list" style="margin-bottom:20px; width:100%; max-width:420px">
+        <li style="color:var(--cream)">5 minutes of journaling every night — no exceptions</li>
+        <li style="color:var(--cream)">3 affirmations before you leave the house</li>
+        <li style="color:var(--cream)">Identify one limiting belief you've been carrying — name it</li>
+        <li style="color:var(--cream)">Read or listen to one personal growth book this month</li>
+        <li style="color:var(--cream)">Set one emotional boundary with someone who crosses yours</li>
+      </ul>
+      <div class="journal-box">
+        <div class="journal-label">September Journal Prompt</div>
+        <p style="font-size:13px; color:var(--cream); opacity:0.8; margin-bottom:12px; font-style:italic">What beliefs am I ready to let go of? Who do I want to become?</p>
+        <input class="journal-input" style="color:var(--cream)" placeholder="your answer..." />
+      </div>
+      <div class="fill-field" style="margin-top:16px">
+        <span class="fill-label">My September non-negotiable</span>
+        <input class="fill-input" style="color:var(--cream)" placeholder="the one thing no matter what..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: OCTOBER -->
+  <div class="slide slide-cream" id="slide-17">
+    <div class="slide-inner">
+      <div class="eyebrow" style="color:var(--navy)">Month Four</div>
+      <div class="display" style="color:var(--navy)">October</div>
+      <div class="month-theme">Financial Reset</div>
+      <div class="divider-left"></div>
+      <ul class="mini-list" style="margin-bottom:20px; width:100%; max-width:420px">
+        <li>Full budget audit — what's coming in, what's going out, no lies</li>
+        <li>Track every dollar spent for 30 days — even $1</li>
+        <li>Start or grow a side income — process server, notary, Turo, gigs</li>
+        <li>$5–$10 daily savings habit — even in a jar</li>
+        <li>2-week no-spend challenge on wants (not needs)</li>
+        <li>Review BCBA school plan — are you on track?</li>
+      </ul>
+      <div class="journal-box" style="background:rgba(27,42,74,0.06); border-left-color:var(--gold)">
+        <div class="journal-label">October Journal Prompt</div>
+        <p style="font-size:13px; opacity:0.7; margin-bottom:12px; font-style:italic">What is my real relationship with money? How do I want it to change?</p>
+        <input class="journal-input" style="color:var(--navy)" placeholder="your answer..." />
+      </div>
+      <div class="fill-field" style="margin-top:16px">
+        <span class="fill-label" style="color:var(--navy)">My October non-negotiable</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="the one thing no matter what..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 19: NOVEMBER -->
+  <div class="slide slide-navy" id="slide-18">
+    <div class="slide-inner">
+      <div class="eyebrow gold-text">Month Five</div>
+      <div class="display cream-text">November</div>
+      <div class="month-theme">Reconnect &amp; Level Up</div>
+      <div class="divider-left"></div>
+      <p class="body-text" style="color:var(--cream); opacity:0.85; font-weight:500; font-size:13px; margin-bottom:6px">Goals:</p>
+      <ul class="mini-list" style="margin-bottom:16px; width:100%; max-width:420px">
+        <li style="color:var(--cream)">Weekly solo self-care hour — no kids, no guilt</li>
+        <li style="color:var(--cream)">Dress &amp; present like the woman who already made it</li>
+        <li style="color:var(--cream)">Update your resume, LinkedIn, or professional presence</li>
+        <li style="color:var(--cream)">Plan the holidays with intention, not survival mode</li>
+        <li style="color:var(--cream)">Let go of one relationship that quietly drains you</li>
+      </ul>
+      <p class="body-text" style="color:var(--cream); opacity:0.85; font-weight:500; font-size:13px; margin-bottom:6px">Mini Habits:</p>
+      <ul class="mini-list" style="margin-bottom:20px; width:100%; max-width:420px">
+        <li style="color:var(--cream)">Daily 10-minute self check-in, no phone</li>
+        <li style="color:var(--cream)">Clean one drawer, folder, or app per week</li>
+        <li style="color:var(--cream)">Social media capped at 1 hour a day</li>
+      </ul>
+      <div class="journal-box">
+        <div class="journal-label">November Journal Prompt</div>
+        <p style="font-size:13px; color:var(--cream); opacity:0.8; margin-bottom:12px; font-style:italic">What gives me peace? What steals my peace? Who have I become since July 1st?</p>
+        <input class="journal-input" style="color:var(--cream)" placeholder="your answer..." />
+      </div>
+      <div class="fill-field" style="margin-top:16px">
+        <span class="fill-label">My November non-negotiable</span>
+        <input class="fill-input" style="color:var(--cream)" placeholder="the one thing no matter what..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20: DECEMBER -->
+  <div class="slide slide-cream" id="slide-19">
+    <div class="slide-inner">
+      <div class="eyebrow" style="color:var(--navy)">Month Six</div>
+      <div class="display" style="color:var(--navy)">December</div>
+      <div class="month-theme">End Strong</div>
+      <div class="divider-left"></div>
+      <p class="body-text" style="opacity:0.85; font-weight:500; font-size:13px; margin-bottom:6px">Goals:</p>
+      <ul class="mini-list" style="margin-bottom:16px; width:100%; max-width:420px">
+        <li>Reflect honestly on your full six-month journey</li>
+        <li>Create your 2027 vision board — name it, see it</li>
+        <li>Choose one word to carry into next year</li>
+        <li>Celebrate progress, not perfection</li>
+        <li>Christmas with intention — the kids remember the energy, not the gifts</li>
+      </ul>
+      <p class="body-text" style="opacity:0.85; font-weight:500; font-size:13px; margin-bottom:6px">Mini Habits:</p>
+      <ul class="mini-list" style="margin-bottom:20px; width:100%; max-width:420px">
+        <li>One weekly reflection session, just you and your notes</li>
+        <li>Write a gratitude letter to yourself</li>
+        <li>Do one kind, unprompted thing for someone else</li>
+      </ul>
+      <div class="journal-box" style="background:rgba(27,42,74,0.06); border-left-color:var(--gold)">
+        <div class="journal-label">December Journal Prompt</div>
+        <p style="font-size:13px; opacity:0.7; margin-bottom:12px; font-style:italic">What have I learned? What am I proud of? What do I want to bring into 2027?</p>
+        <input class="journal-input" style="color:var(--navy)" placeholder="your answer..." />
+      </div>
+      <div class="fill-field" style="margin-top:16px">
+        <span class="fill-label" style="color:var(--navy)">My December non-negotiable</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="the one thing no matter what..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20B: BONUS — THE HONEST LIFE AUDIT -->
+  <div class="slide slide-navy-pattern" id="slide-20">
+    <div class="slide-inner center">
+      <div class="eyebrow gold-text">Bonus Section</div>
+      <div class="display cream-text">The Honest</div>
+      <div class="display gold-text">Life Audit</div>
+      <div class="divider"></div>
+      <p class="subheading center" style="max-width:320px">
+        Six categories. Find what's actually broken.<br>Fix it in 30 days.
+      </p>
+      <div style="margin-top:12px">
+        <span class="tag">Health &amp; Fitness</span>
+        <span class="tag">Mindset</span>
+        <span class="tag">Finances &amp; Career</span>
+        <span class="tag">Relationships</span>
+        <span class="tag">Growth &amp; Skills</span>
+        <span class="tag">Fun &amp; Fulfillment</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20C: AUDIT - HEALTH & FITNESS -->
+  <div class="slide slide-cream" id="slide-21">
+    <div class="slide-inner">
+      <div class="eyebrow" style="color:var(--navy)">Audit 1 of 6</div>
+      <div class="heading" style="color:var(--navy)">Health &amp; Fitness</div>
+      <div class="divider-left"></div>
+      <p class="body-text" style="margin-bottom:16px; opacity:0.8">Rate honestly. No sugarcoating.</p>
+      <div class="fill-field">
+        <span class="fill-label" style="color:var(--navy)">Where I'm at right now (1–10)</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="be honest..." />
+      </div>
+      <div class="fill-field" style="margin-top:10px">
+        <span class="fill-label" style="color:var(--navy)">The one habit that would move this most</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="gym 3x/week, more water..." />
+      </div>
+      <div class="fill-field" style="margin-top:10px">
+        <span class="fill-label" style="color:var(--navy)">30-day commitment</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="what you'll do daily..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20D: AUDIT - MENTAL HEALTH & MINDSET -->
+  <div class="slide slide-navy" id="slide-22">
+    <div class="slide-inner">
+      <div class="eyebrow gold-text">Audit 2 of 6</div>
+      <div class="heading cream-text">Mental Health &amp; Mindset</div>
+      <div class="divider-left"></div>
+      <p class="body-text cream-text" style="margin-bottom:16px; opacity:0.8">The foundation everything else stands on.</p>
+      <div class="fill-field">
+        <span class="fill-label">Where I'm at right now (1–10)</span>
+        <input class="fill-input" style="color:var(--cream)" placeholder="be honest..." />
+      </div>
+      <div class="fill-field" style="margin-top:10px">
+        <span class="fill-label">The one habit that would move this most</span>
+        <input class="fill-input" style="color:var(--cream)" placeholder="journaling, therapy, affirmations..." />
+      </div>
+      <div class="fill-field" style="margin-top:10px">
+        <span class="fill-label">30-day commitment</span>
+        <input class="fill-input" style="color:var(--cream)" placeholder="what you'll do daily..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20E: AUDIT - FINANCES & CAREER -->
+  <div class="slide slide-cream" id="slide-23">
+    <div class="slide-inner">
+      <div class="eyebrow" style="color:var(--navy)">Audit 3 of 6</div>
+      <div class="heading" style="color:var(--navy)">Finances &amp; Career</div>
+      <div class="divider-left"></div>
+      <p class="body-text" style="margin-bottom:16px; opacity:0.8">Bills, BCBA path, gig income, all of it.</p>
+      <div class="fill-field">
+        <span class="fill-label" style="color:var(--navy)">Where I'm at right now (1–10)</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="be honest..." />
+      </div>
+      <div class="fill-field" style="margin-top:10px">
+        <span class="fill-label" style="color:var(--navy)">The one habit that would move this most</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="track spending, open a savings account..." />
+      </div>
+      <div class="fill-field" style="margin-top:10px">
+        <span class="fill-label" style="color:var(--navy)">30-day commitment</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="what you'll do daily..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20F: AUDIT - RELATIONSHIPS & SOCIAL LIFE -->
+  <div class="slide slide-navy" id="slide-24">
+    <div class="slide-inner">
+      <div class="eyebrow gold-text">Audit 4 of 6</div>
+      <div class="heading cream-text">Relationships &amp; Social Life</div>
+      <div class="divider-left"></div>
+      <p class="body-text cream-text" style="margin-bottom:16px; opacity:0.8">Your six kids, your circle, and you.</p>
+      <div class="fill-field">
+        <span class="fill-label">Where I'm at right now (1–10)</span>
+        <input class="fill-input" style="color:var(--cream)" placeholder="be honest..." />
+      </div>
+      <div class="fill-field" style="margin-top:10px">
+        <span class="fill-label">The one habit that would move this most</span>
+        <input class="fill-input" style="color:var(--cream)" placeholder="more presence, fewer one-sided friendships..." />
+      </div>
+      <div class="fill-field" style="margin-top:10px">
+        <span class="fill-label">30-day commitment</span>
+        <input class="fill-input" style="color:var(--cream)" placeholder="what you'll do daily..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20G: AUDIT - PERSONAL GROWTH & SKILLS -->
+  <div class="slide slide-cream" id="slide-25">
+    <div class="slide-inner">
+      <div class="eyebrow" style="color:var(--navy)">Audit 5 of 6</div>
+      <div class="heading" style="color:var(--navy)">Personal Growth &amp; Skills</div>
+      <div class="divider-left"></div>
+      <p class="body-text" style="margin-bottom:16px; opacity:0.8">Process server, notary, BCBA — your future credentials.</p>
+      <div class="fill-field">
+        <span class="fill-label" style="color:var(--navy)">Where I'm at right now (1–10)</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="be honest..." />
+      </div>
+      <div class="fill-field" style="margin-top:10px">
+        <span class="fill-label" style="color:var(--navy)">The one habit that would move this most</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="study 20 min/day, one course module/week..." />
+      </div>
+      <div class="fill-field" style="margin-top:10px">
+        <span class="fill-label" style="color:var(--navy)">30-day commitment</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="what you'll do daily..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20H: AUDIT - FUN, HOBBIES & FULFILLMENT -->
+  <div class="slide slide-navy" id="slide-26">
+    <div class="slide-inner">
+      <div class="eyebrow gold-text">Audit 6 of 6</div>
+      <div class="heading cream-text">Fun, Hobbies &amp; Fulfillment</div>
+      <div class="divider-left"></div>
+      <p class="body-text cream-text" style="margin-bottom:16px; opacity:0.8">The glow up isn't just survival — it's joy too.</p>
+      <div class="fill-field">
+        <span class="fill-label">Where I'm at right now (1–10)</span>
+        <input class="fill-input" style="color:var(--cream)" placeholder="be honest..." />
+      </div>
+      <div class="fill-field" style="margin-top:10px">
+        <span class="fill-label">The one habit that would move this most</span>
+        <input class="fill-input" style="color:var(--cream)" placeholder="nails, lashes, one hobby hour a week..." />
+      </div>
+      <div class="fill-field" style="margin-top:10px">
+        <span class="fill-label">30-day commitment</span>
+        <input class="fill-input" style="color:var(--cream)" placeholder="what you'll do daily..." />
+      </div>
+      <div class="journal-box" style="margin-top:20px">
+        <div class="journal-label">The Real Question</div>
+        <p style="font-size:13px; color:var(--cream); opacity:0.85; font-style:italic">Which of these six areas is actually holding everything else back? Be honest. That's the one to fix first.</p>
+        <input class="journal-input" style="color:var(--cream); margin-top:10px" placeholder="my real bottleneck is..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 21: DECEMBER 31 VISION -->
+  <div class="slide slide-navy-pattern" id="slide-27">
+    <div class="slide-inner">
+      <div class="eyebrow gold-text">The Vision</div>
+      <div class="heading cream-text" style="text-align:center; margin-bottom:8px">What December 31st<br><span class="gold-text">actually looks like.</span></div>
+      <p class="subheading center" style="margin-bottom:24px">Not a goal. A feeling.</p>
+      <div class="divider"></div>
+      <div class="fill-field" style="margin-top:8px">
+        <span class="fill-label">I want to feel</span>
+        <input class="fill-input" style="color:var(--cream)" placeholder="free, proud, strong, at peace..." />
+      </div>
+      <div class="fill-field" style="margin-top:8px">
+        <span class="fill-label">I want to have</span>
+        <input class="fill-input" style="color:var(--cream)" placeholder="savings, my certification, peace of mind..." />
+      </div>
+      <div class="fill-field" style="margin-top:8px">
+        <span class="fill-label">I want to have stopped</span>
+        <input class="fill-input" style="color:var(--cream)" placeholder="doubting myself, overspending, shrinking..." />
+      </div>
+      <p class="body-text center" style="margin-top:28px; font-size:12px; opacity:0.5">Read this every time you feel like quitting.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 22: ACCOUNTABILITY -->
+  <div class="slide slide-cream" id="slide-28">
+    <div class="slide-inner center">
+      <div class="eyebrow" style="color:var(--navy)">Last Thing</div>
+      <div class="heading" style="color:var(--navy); text-align:center; margin-bottom:16px">Who will keep<br><span style="color:var(--gold)">you honest?</span></div>
+      <div class="divider"></div>
+      <p class="body-text center" style="max-width:320px; margin-bottom:28px">Write one person's name who will ask you how it's going. Someone who believes in what you're building.</p>
+      <div class="fill-field">
+        <span class="fill-label" style="color:var(--navy)">My accountability person</span>
+        <input class="fill-input" style="color:var(--navy)" placeholder="name them right now..." />
+      </div>
+      <p style="font-size:13px; opacity:0.6; margin-top:20px; font-style:italic; font-family:'Cormorant Garamond',serif">Send them this note. That's your accountability sorted.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 23: CLOSING -->
+  <div class="slide slide-navy" id="slide-29">
+    <div class="slide-inner center">
+      <div class="cover-badge">J Empire · Second Half 2026</div>
+      <div class="display-italic gold-text" style="font-size:clamp(28px,7vw,46px); margin-bottom:12px">"Discipline today,</div>
+      <div class="display-italic cream-text" style="font-size:clamp(28px,7vw,46px); margin-bottom:28px">freedom tomorrow."</div>
+      <div class="divider"></div>
+      <p class="body-text center" style="max-width:300px; margin-bottom:28px; opacity:0.7">
+        You have five life areas filled.<br>
+        Six months mapped.<br>
+        One focus per month.<br>
+        A vision for December 31st.<br>
+        One person who knows your plan.<br><br>
+        <strong style="color:var(--gold); font-family:'Cormorant Garamond',serif; font-size:20px; font-style:italic">Now close this and go do July.</strong>
+      </p>
+      <div class="cover-name" style="opacity:0.4">Jasz · #rubiaxolinda · J Empire</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NAVIGATION -->
+<nav class="nav" id="nav">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" disabled>‹</button>
+  <div class="progress-dots" id="dots"></div>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">›</button>
+</nav>
+
+<script>
+  const totalSlides = 30;
+  let current = 0;
+
+  // Build dots
+  const dotsEl = document.getElementById('dots');
+  for (let i = 0; i < totalSlides; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    dotsEl.appendChild(d);
+  }
+
+  function showSlide(index) {
+    for (let i = 0; i < totalSlides; i++) {
+      const s = document.getElementById('slide-' + i);
+      s.style.transition = 'none';
+      s.style.opacity = i === index ? '1' : '0';
+      s.style.transform = i < index ? 'translateX(-100%)' : i > index ? 'translateX(100%)' : 'translateX(0)';
+      s.style.pointerEvents = i === index ? 'auto' : 'none';
+      s.style.zIndex = i === index ? '1' : '0';
+    }
+    const active = document.getElementById('slide-' + index);
+    active.scrollTop = 0;
+
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === index);
+    });
+
+    document.getElementById('prevBtn').disabled = index === 0;
+    document.getElementById('nextBtn').disabled = index === totalSlides - 1;
+
+    const isLight = active.classList.contains('slide-cream');
+    document.getElementById('nav').style.background = isLight
+      ? 'linear-gradient(to top, rgba(248,244,237,0.95) 0%, transparent 100%)'
+      : 'linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%)';
+  }
+
+  function navigate(dir) {
+    const next = Math.max(0, Math.min(totalSlides - 1, current + dir));
+    if (next === current) return;
+    current = next;
+    showSlide(current);
+  }
+
+  // Touch/swipe support
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.getElementById('book').addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.getElementById('book').addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      navigate(dx < 0 ? 1 : -1);
+    }
+  }, { passive: true });
+
+  // Init on load
+  showSlide(0);
+</script>
+</body>
+</html>
